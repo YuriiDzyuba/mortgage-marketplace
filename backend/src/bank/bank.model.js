@@ -29,12 +29,14 @@ const schema = new Schema({
         trim: true,
     },
     [BANK_MINIMUM_DOWN_PAYMENT]: {
-        type: Boolean,
-        required: true,
+        type: Number,
+        required: false,
+        trim: true,
     },
     [BANK_LOAN_TERM]: {
-        type: Boolean,
-        required: true,
+        type: Number,
+        required: false,
+        trim: true,
     },
     [USER]: {
         ref: USER,

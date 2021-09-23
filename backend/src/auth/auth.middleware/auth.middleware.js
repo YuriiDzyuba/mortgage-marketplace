@@ -1,7 +1,7 @@
 const authService = require('../auth.service');
 const CustomError = require('../../../exeptions/customError');
 const { checkAuthInputs, createNewUserValidator, createNewAdminValidator } = require('../auth.validators');
-const { availablePicParams, code, message, dbEnum, authConst } = require('../../../consts');
+const { availablePicParams, code, message, authConst, userConstants } = require('../../../consts');
 
 const authMiddleware = {
     isReqQueryEmpty: (req, res, next) => {
@@ -17,11 +17,11 @@ const authMiddleware = {
 
     checkAvatar: (req, res, next) => {
         try {
-            if (!req.files || !req.files[dbEnum.AVATAR]) {
+            if (!req.files || !req.files[userConstants.USER_AVATAR]) {
                 next();
                 return;
             }
-            const { name, size, mimetype } = req.files[dbEnum.AVATAR];
+            const { name, size, mimetype } = req.files[userConstants.USER_AVATAR];
 
             if (!availablePicParams.MIMETYPES.includes(mimetype)) {
                 throw new CustomError(code.BAD_REQUEST, `${name} - ${message.WRONG_PIC_FORMAT}`);
@@ -66,7 +66,7 @@ const authMiddleware = {
 
     checkRegistrationInputs: (req, res, next) => {
         try {
-            console.log(req.body, 'req.body');
+            console.log(req.body, 'req.body ---checkRegistrationInputs');
             const { error, value } = createNewUserValidator.validate(req.body);
 
             if (error) throw new CustomError(code.BAD_REQUEST, error.details[0].message);
@@ -99,7 +99,7 @@ const authMiddleware = {
         }
     },
 
-    checkToken: (tokenType = dbEnum.ACCESS_TOKEN) => async (req, res, next) => {
+    checkToken: (tokenType = authConst.ACCESS_TOKEN) => async (req, res, next) => {
         try {
 
             const token = req.get(authConst.AUTHORIZATION);
@@ -116,7 +116,7 @@ const authMiddleware = {
             const savedToken = await authService.findToken({ [tokenType]: token });
 
             if (!savedToken) throw new CustomError(code.UNAUTHORIZED, message.ACCOUNT_UNACTIVATED);
-
+            console.log(savedToken,'savedTokensavedToken');
             req.currentUser = savedToken.user;
 
             next();

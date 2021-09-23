@@ -3,20 +3,20 @@ const adService = require('./bank.service');
 const { code, message } = require('../../consts');
 
 const bankController = {
-    getAllAds: (fieldsToRemove) => async (req, res, next) => {
+    getAllBanks: async (req, res, next) => {
         try {
-            const ads = await adService.getAllAds(fieldsToRemove);
+            const banks = await adService.getAllBanks();
 
-            if (!Object.keys(ads).length) throw new CustomError(code.NOT_FOUND, message.NO_ADS);
-
-            res.json(ads);
+            if (!Object.keys(banks).length) throw new CustomError(code.NOT_FOUND, message.NO_ADS);
+            console.log(banks,'banks');
+            res.json(banks);
 
         } catch (e) {
             next(e);
         }
     },
 
-    createNewAd: async (req, res, next) => {
+    createNewBank: async (req, res, next) => {
         try {
             const adData = req.body;
             const { currentUser } = req;

@@ -4,10 +4,11 @@ import {
     USER_ID_FIELD,
     USER_NAME_FIELD,
     USER_ROLE_FIELD,
-    USER_SECOND_NAME_FIELD } from '../../consts/userConsts';
+    USER_SECOND_NAME_FIELD } from '../consts/userConsts';
+import { getAgent } from '../http/agentsApi';
 
-const UPLOAD_USER = 'UPLOAD_USER';
-const UNLOAD_USER = 'UNLOAD_USER';
+const UPLOAD_AGENT = 'UPLOAD_AGENT';
+const UNLOAD_AGENT = 'UNLOAD_AGENT';
 
 const initialState = {
     [USER_EMAIL_FIELD]: '',
@@ -18,19 +19,28 @@ const initialState = {
     [USER_ID_FIELD]: '',
 };
 
-export const userReducer = (state = initialState, action) => {
+export const agentReducer = (state = initialState, action) => {
     switch (action.type) {
-        case UPLOAD_USER:
+        case UPLOAD_AGENT:
             const newState = { ...initialState };
             const newStateFields = Object.keys(initialState);
 
             newStateFields.forEach((field) => { newState[field] = action.payload[field]; });
             return { ...newState };
-        case UNLOAD_USER:
+        case UNLOAD_AGENT:
             return { ...state, ...initialState };
         default:
             return state;
     }
 };
 
-export const uploadUser = (payload) => ({ type: UPLOAD_USER, payload });
+export const uploadAgent = (payload) => ({ type: UPLOAD_AGENT, payload });
+
+export const unloadAgent = (payload) => ({ type: UNLOAD_AGENT, payload });
+
+export const getCurrentAgent = (agentId) => async (dispatch) => {
+
+    const responseData = await getAgent(agentId);
+
+    dispatch(uploadAgent(responseData));
+};

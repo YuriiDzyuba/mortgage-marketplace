@@ -2,13 +2,13 @@ const CustomError = require('../../exeptions/customError');
 const userNormalizer = require('../../utils/userNormalizer');
 const authService = require('./auth.service');
 const userService = require('../users/user.service');
-const { code, message, customErrors, dbEnum, authConst } = require('../../consts');
+const { code, message, customErrors, userConstants: { USER_AVATAR }, authConst } = require('../../consts');
 
 const authController = {
     createNewUser: async (req, res, next) => {
         try {
             const applicantData = req.body;
-            console.log(applicantData, 'applicantData');
+
             const hashedPassword = await authService.hashPassword(applicantData.password);
 
             let newUser = await authService.addNewUser({
@@ -16,11 +16,11 @@ const authController = {
                 password: hashedPassword
             });
 
-            if (req.files && req.files[dbEnum.AVATAR]) {
+            if (req.files && req.files[USER_AVATAR]) {
                 const { _id } = newUser;
-                const uploadFile = await authService.uploadImageToAWS(req.files[dbEnum.AVATAR], dbEnum.AVATAR, _id);
+                const uploadFile = await authService.uploadImageToAWS(req.files[USER_AVATAR], USER_AVATAR, _id);
 
-                newUser = await userService.updateUser(_id, { [dbEnum.AVATAR]: uploadFile.Location }, true);
+                newUser = await userService.updateUser(_id, { [USER_AVATAR]: uploadFile.Location }, true);
             }
 
             const normalizedUser = userNormalizer(newUser);

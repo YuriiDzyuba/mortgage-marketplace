@@ -1,0 +1,16 @@
+.card{
+  align-items: center;
+}
+
+.card__img {
+  margin-top: 1rem;
+  max-height: 100px;
+  max-width: 120px;
+}
+
+.card__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

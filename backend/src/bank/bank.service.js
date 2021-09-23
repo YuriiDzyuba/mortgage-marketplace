@@ -1,46 +1,45 @@
-const Ad = require('./bank.model');
+const Bank = require('./bank.model');
 const { dbEnum: { USER, ID } } = require('../../consts');
 
 const bankService = {
-    getAllAds: async (fieldsToRemove = []) => {
-        const ads = await Ad.find({})
-            .select(fieldsToRemove.join(' '));
-        return ads;
+    getAllBanks: async () => {
+        const banks = await Bank.find({});
+        return banks;
     },
 
     getAdsByDynamicParam: async (param) => {
-        const ads = await Ad.find(param);
-        return ads;
+        const banks = await Bank.find(param);
+        return banks;
     },
 
     getOneAd: async (id) => {
-        const ad = await Ad.findById(id);
-        return ad;
+        const bank = await Bank.findById(id);
+        return bank;
     },
 
     getUserAd: async (adId, userId) => {
-        const usersAd = await Ad.findOne({
+        const usersBanks = await Bank.findOne({
             [ID]: adId,
             [USER]: userId
         });
-        return usersAd;
+        return usersBanks;
     },
 
-    createNewAd: async (newAdDate, userId) => {
-        const newAds = await Ad.create({
-            ...newAdDate,
+    createNewAd: async (newBankDate, userId) => {
+        const newBank = await Bank.create({
+            ...newBankDate,
             [USER]: userId
         });
-        return newAds;
+        return newBank;
     },
 
     updateAdvertisement: async (id, data) => {
-        const updatedAd = await Ad.findByIdAndUpdate(id, data);
+        const updatedAd = await Bank.findByIdAndUpdate(id, data);
         return updatedAd;
     },
 
     deleteAd: async (id) => {
-        const deletedAd = await Ad.findByIdAndDelete(id);
+        const deletedAd = await Bank.findByIdAndDelete(id);
         return deletedAd;
     }
 };

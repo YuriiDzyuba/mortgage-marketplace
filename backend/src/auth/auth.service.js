@@ -7,7 +7,7 @@ const User = require('../users/user.model');
 const config = require('../../config');
 const fileNameBuilder = require('../../utils/fileNameBuilder');
 
-const { USER, ACCESS_TOKEN, REFRESH_TOKEN, FORGOT_PASSWORD_TOKEN, ACTIVATE_ACCOUNT_TOKEN } = require('../../consts/dbEnum');
+const { userConstants: { USER }, authConst: { ACCESS_TOKEN, REFRESH_TOKEN } } = require('../../consts');
 const { AWS_S3_NAME, AWS_S3_SECRET_KEY, AWS_S3_ACCESS_KEY, AWS_S3_REGION } = require('../../config');
 
 const bucket = new S3({
@@ -56,12 +56,6 @@ const authService = {
                 break;
             case REFRESH_TOKEN:
                 secret = config.REFRESH_TOKEN_SECRET;
-                break;
-            case FORGOT_PASSWORD_TOKEN:
-                secret = config.FORGOT_PASS_TOKEN_SECRET;
-                break;
-            case ACTIVATE_ACCOUNT_TOKEN:
-                secret = config.ACCOUNT_ACTIVATE_TOKEN_SECRET;
                 break;
             default:
                 secret = config.ACCESS_TOKEN_SECRET;

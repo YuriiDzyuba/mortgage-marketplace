@@ -1,12 +1,12 @@
 const adService = require('../bank.service');
 const CustomError = require('../../../exeptions/customError');
 const { code, message, dbEnum } = require('../../../consts');
-const { createNewAd, updateAd } = require('../bank.validators');
+const { createNewBank, updateAd } = require('../bank.validators');
 
 const bankMiddleware = {
-    checkCreateNewAdInputs: (req, res, next) => {
+    checkCreateNewBankInputs: (req, res, next) => {
         try {
-            const { error, value } = createNewAd.validate(req.body);
+            const { error, value } = createNewBank.validate(req.body);
 
             if (error) throw new CustomError(400, error.details[0].message);
 

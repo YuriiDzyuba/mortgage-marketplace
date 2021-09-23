@@ -2,14 +2,14 @@ const Joi = require('joi');
 const {
     bankConstants: {
         BANK_NAME,
-        INTEREST_RATE,
-        MAXIMUM_LOAN,
-        MINIMUM_DOWN_PAYMENT,
-        LOAN_TERM,
-        QUANTITY_MAX,
-        QUANTITY_MIN,
-        PRICE_VALUE_MAX,
-        PRICE_VALUE_MIN,
+        BANK_INTEREST_RATE,
+        BANK_MAXIMUM_LOAN,
+        BANK_MINIMUM_DOWN_PAYMENT,
+        BANK_LOAN_TERM,
+        BANK_QUANTITY_MAX,
+        BANK_QUANTITY_MIN,
+        BANK_BANK_MAXIMUM_LOAN_VALUE_MIN,
+        BANK_BANK_MAXIMUM_LOAN_VALUE_MAX,
         BANK_NAME_LENGTH_MAX,
         BANK_NAME_LENGTH_MIN,
         BANK_ID_LENGTH
@@ -26,22 +26,21 @@ module.exports = {
             .max(BANK_NAME_LENGTH_MAX)
             .required()
             .trim(),
-        [INTEREST_RATE]: Joi.number()
+        [BANK_INTEREST_RATE]: Joi.number()
             .integer()
-            .min(QUANTITY_MIN)
-            .max(QUANTITY_MAX),
-        [MAXIMUM_LOAN]: Joi.number()
+            .min(BANK_QUANTITY_MIN)
+            .max(BANK_QUANTITY_MAX),
+        [BANK_MAXIMUM_LOAN]: Joi.number()
             .integer()
-            .min(PRICE_VALUE_MIN)
-            .max(PRICE_VALUE_MAX)
+            .min(BANK_BANK_MAXIMUM_LOAN_VALUE_MIN)
+            .max(BANK_BANK_MAXIMUM_LOAN_VALUE_MAX)
             .required(),
-        [MINIMUM_DOWN_PAYMENT]: Joi.boolean()
+        [BANK_MINIMUM_DOWN_PAYMENT]: Joi.number()
             .required(),
-        [LOAN_TERM]: Joi.string()
-            .min(BANK_ID_LENGTH)
-            .max(BANK_ID_LENGTH)
-            .required()
-            .trim(),
+        [BANK_LOAN_TERM]: Joi.number()
+            .min(BANK_BANK_MAXIMUM_LOAN_VALUE_MIN)
+            .max(BANK_BANK_MAXIMUM_LOAN_VALUE_MAX)
+            .required(),
         [USER]: Joi.string()
             .min(USER_ID_LENGTH)
             .max(USER_ID_LENGTH)

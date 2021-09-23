@@ -2,7 +2,7 @@ const { checkId, checkUserRole, getUserById } = require('../../users/user.middle
 const { checkToken, isReqQueryEmpty } = require('../../auth/auth.middleware');
 const {
     checkUserIdQuery,
-    checkCreateNewAdInputs,
+    checkCreateNewBankInputs,
     getAdsByQueries,
     checkUserAccess
 } = require('./bank.middleware');
@@ -15,6 +15,6 @@ module.exports = {
     checkUserRole,
     getUserById,
     checkUserIdQuery,
-    checkCreateNewAdInputs,
+    checkCreateNewBankInputs,
     getAdsByQueries
 };

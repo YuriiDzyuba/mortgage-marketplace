@@ -1,26 +1,35 @@
 import React from 'react';
-import { Button, Container, Form, Row } from 'react-bootstrap';
+import { Button, ButtonGroup, Container, Form, Row, ToggleButton } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { LOGIN_ROUTE } from '../consts/pagePaths';
 import style from './registration.module.scss';
 import {
     changeAvatar,
-    changeBornYear,
     changeEmail,
     changeName,
     changePassword,
+    changeSecondName,
+    changeUserRole,
     registerNewUser
 } from '../redux/userReducers/registrationReducer';
 import {
-   // USER_AVATAR_FIELD,
-    USER_BORN_YEAR_FIELD,
+    USER_SECOND_NAME_FIELD,
+    // eslint-disable-next-line sort-imports
+    USER_ROLE_FIELD,
     USER_EMAIL_FIELD,
     USER_NAME_FIELD,
-    USER_PASSWORD_FIELD
+    USER_PASSWORD_FIELD,
+    USER_ROLE_AGENT,
+    USER_ROLE_USER
 } from '../consts/userConsts';
 
 const Registration = () => {
+
+    const radios = [
+        { name: USER_ROLE_USER },
+        { name: USER_ROLE_AGENT },
+    ];
 
     const registration = useSelector((state) => state.registration);
     const dispatch = useDispatch();
@@ -39,7 +48,7 @@ const Registration = () => {
             <Form className={style.registrationPage__form} onSubmit={(e) => click(e)}>
                 <h3>{'Registration'}</h3>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>email address *</Form.Label>
+                    <Form.Label>email *</Form.Label>
                     <Form.Control
                         type="email"
                         placeholder="joedoe@gmail.com"
@@ -60,24 +69,45 @@ const Registration = () => {
                     </Form.Text>
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label>nick name *</Form.Label>
+                    <Form.Label>name *</Form.Label>
                     <Form.Control
                         type="text"
-                        placeholder="jon33"
+                        placeholder="Jon"
                         value={registration[USER_NAME_FIELD]}
                         onChange={(e) => dispatch(changeName(e.target.value))}
                     />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label>born year *</Form.Label>
+                    <Form.Label>second name *</Form.Label>
                     <Form.Control
                         type="text"
-                        placeholder="1999"
-                        value={registration[USER_BORN_YEAR_FIELD]}
-                        onChange={(e) => dispatch(changeBornYear(e.target.value))}
+                        placeholder="Doe"
+                        value={registration[USER_SECOND_NAME_FIELD]}
+                        onChange={(e) => dispatch(changeSecondName(e.target.value))}
                     />
                 </Form.Group>
-                <Form.Group className="mb-3" controlId="formBasicPassword">
+                <ButtonGroup className="mb-2">
+                    <Form.Label className="mt-2">chose role :</Form.Label>
+                    {radios.map((radio, idx) => (
+                        <ToggleButton
+                            className="m-1"
+                            key={idx}
+                            id={`radio-${idx}`}
+                            type="radio"
+                            variant={idx % 2 ? 'outline-success' : 'outline-primary'}
+                            name="radio"
+                            value={radio.name}
+                            checked={registration[USER_ROLE_FIELD] === radio.name}
+                            onChange={(e) => dispatch(changeUserRole(e.currentTarget.value))}
+                        >
+                            {radio.name}
+                        </ToggleButton>
+                    ))}
+                    <Form.Text className="text-muted mt-2">
+                        {registration[USER_ROLE_FIELD] === USER_ROLE_USER ? 'you can\'t create banks' : 'you can create banks'}
+                    </Form.Text>
+                </ButtonGroup>
+                <Form.Group className="mb-3" controlId="formFile">
                     <Form.Label>avatar : </Form.Label>
                     <Form.Control
                         type="file"

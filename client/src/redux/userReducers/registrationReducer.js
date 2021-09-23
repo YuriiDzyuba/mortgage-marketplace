@@ -2,16 +2,19 @@ import { registration } from '../../http/userApi';
 import { uploadUser } from './userReducer';
 import {
     USER_AVATAR_FIELD,
-    USER_BORN_YEAR_FIELD,
     USER_EMAIL_FIELD,
     USER_NAME_FIELD,
-    USER_PASSWORD_FIELD
+    USER_PASSWORD_FIELD,
+    USER_ROLE_FIELD, USER_ROLE_USER,
+    USER_SECOND_NAME_FIELD
+
 } from '../../consts/userConsts';
 
 const CHANGE_EMAIL = 'CHANGE_EMAIL';
 const CHANGE_PASSWORD = 'CHANGE_PASSWORD';
 const CHANGE_NAME = 'CHANGE_NAME';
-const CHANGE_BORN_YEAR = 'CHANGE_BORN_YEAR';
+const SECOND_NAME = 'SECOND_NAME';
+const CHANGE_ROLE = 'CHANGE_ROLE';
 const CHANGE_AVATAR = 'CHANGE_AVATAR';
 const CLEAR_ALL = 'CLEAR_ALL';
 
@@ -19,7 +22,8 @@ const initialState = {
     [USER_EMAIL_FIELD]: '',
     [USER_PASSWORD_FIELD]: '',
     [USER_NAME_FIELD]: '',
-    [USER_BORN_YEAR_FIELD]: '',
+    [USER_SECOND_NAME_FIELD]: '',
+    [USER_ROLE_FIELD]: USER_ROLE_USER,
     [USER_AVATAR_FIELD]: '',
     [USER_NAME_FIELD]: '',
 };
@@ -32,8 +36,10 @@ export const registrationReducer = (state = initialState, action) => {
             return { ...state, [USER_PASSWORD_FIELD]: action.text };
         case CHANGE_NAME:
             return { ...state, [USER_NAME_FIELD]: action.text };
-        case CHANGE_BORN_YEAR:
-            return { ...state, [USER_BORN_YEAR_FIELD]: action.text };
+        case SECOND_NAME:
+            return { ...state, [USER_SECOND_NAME_FIELD]: action.text };
+        case CHANGE_ROLE:
+            return { ...state, [USER_ROLE_FIELD]: action.payload };
         case CHANGE_AVATAR:
             return { ...state, [USER_AVATAR_FIELD]: action.payload };
         case CLEAR_ALL:
@@ -49,7 +55,9 @@ export const changePassword = (text) => ({ type: CHANGE_PASSWORD, text });
 
 export const changeName = (text) => ({ type: CHANGE_NAME, text });
 
-export const changeBornYear = (text) => ({ type: CHANGE_BORN_YEAR, text });
+export const changeSecondName = (text) => ({ type: SECOND_NAME, text });
+
+export const changeUserRole = (payload) => ({ type: CHANGE_ROLE, payload });
 
 export const changeAvatar = (payload) => ({ type: CHANGE_AVATAR, payload });
 
@@ -65,20 +73,4 @@ export const registerNewUser = () => async (dispatch, getState) => {
         dispatch(clearAllFields());
         dispatch(uploadUser(accessToken));
     }
-};
-
-export const checkTokens = () => async () => {
-
-    // const refreshToken = localStorage.getItem('refreshToken');
-    //
-    // if (refreshToken) {
-    //     const accessToken = await getNewTokens(refreshToken);
-    //
-    //     if (accessToken) {
-    //         dispatch(uploadUser(accessToken));
-    //     }
-    // } else {
-    //     dispatch(uploadUser({ [USER_ROLE_FIELD]: USER_ROLE_PUBLIC }));
-    // }
-
 };

@@ -1,4 +1,4 @@
 module.exports = {
-    ADMIN: 'admin',
+    AGENT: 'agent',
     USER: 'user'
 };
