@@ -1,0 +1,17 @@
+.bankHistoryCard{
+  margin-bottom: 1rem;
+}
+
+.bankHistoryCard__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: .3rem;
+
+  button {
+    padding: .1rem .7rem .3rem .7rem;
+    border-radius: 333px;
+  }
+}
+
