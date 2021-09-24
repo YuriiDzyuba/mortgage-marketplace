@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Col, Container, Image, Row } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import BankCardHor2 from '../components/BankCardHor2';
+import BankCardVert from '../components/bankCardVert';
 import Loader from '../components/Loader';
 import {
     USER_AVATAR_FIELD,
@@ -13,24 +13,27 @@ import {
 } from '../consts/userConsts';
 import noavatar from '../img/no-avatar.png';
 import { getCurrentAgent } from '../redux/agentReducer';
+import { getAllBanks } from '../redux/bankReducers/banksReducer';
 import style from './userAccount.module.scss';
 
 const AgentPage = () => {
 
     const history = useHistory();
     const agent = useSelector((state) => state.agent);
+    const { banks } = useSelector((state) => state.banks);
+
     const dispatch = useDispatch();
 
     const agentId = history.location.pathname.split('/').pop();
 
-    console.log(history, 'history');
-    console.log(agent, 'agent');
-
     useEffect(() => {
         dispatch(getCurrentAgent(agentId));
+        dispatch(getAllBanks());
     }, []);
 
-    if (!agent) return <Loader/>;
+    if (!agent || !banks.length) return <Loader/>;
+
+    const agentsBanks = Object.values(banks).filter((e) => (e.user === agentId));
 
     return (
         <>
@@ -53,9 +56,8 @@ const AgentPage = () => {
                             <div className={style.userAccount__cardsHeader}>
                                 <h3>banks</h3>
                             </div>
-                            <Row className={`row-cols-1 g-2 ${style.userAccount__headersRow}`}>
-                                <BankCardHor2/>
-                                <BankCardHor2/>
+                            <Row className={`row-cols-2 g-2 ${style.userAccount__headersRow}`}>
+                                {agentsBanks.map((bank) => <BankCardVert bank={bank} />)}
                             </Row>
                         </Col>
                     </Row>

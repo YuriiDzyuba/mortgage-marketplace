@@ -17,7 +17,7 @@ const Home = () => {
     useEffect(() => {
         dispatch(getAllAgents());
         dispatch(getAllBanks());
-    }, [dispatch]);
+    }, []);
 
     if (!agents.length || !banks.length) return <Loader/>;
 

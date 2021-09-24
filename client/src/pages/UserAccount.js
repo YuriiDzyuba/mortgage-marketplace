@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Image, Row } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import Loader from '../components/Loader';
 import { USER_AVATAR_FIELD,
     USER_EMAIL_FIELD,
     USER_ID_FIELD,
@@ -8,20 +9,48 @@ import { USER_AVATAR_FIELD,
     USER_ROLE_FIELD,
     USER_SECOND_NAME_FIELD
 } from '../consts/userConsts';
+import { BANK_ID_FIELD } from '../consts/bankConsts';
 import BankCardHor from '../components/BankCardHor';
 import BankHistoryCard from '../components/BankHistoryCard';
 import EditBankModal from '../components/EditBankModal';
+import { getAllBanks } from '../redux/bankReducers/banksReducer';
 import style from './userAccount.module.scss';
 import noavatar from '../img/no-avatar.png';
 
 const UserAccount = () => {
 
+    const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
+    const { banks } = useSelector((state) => state.banks);
 
     const [show, setShow] = useState(false);
+    const [chosenBank, setChosenBank] = useState({});
+
+    useEffect(() => {
+        if (!banks.length) {
+            dispatch(getAllBanks());
+        }
+    }, []);
+
+    if (!Object.values(banks).length) return <Loader/>;
+
+    const openModal = (bankToEdit = {}) => {
+        setChosenBank(bankToEdit);
+        setShow(true);
+    };
+
+    const updateChosenBank = (fieldName, value) => {
+        setChosenBank((prevState) => ({ ...prevState, [fieldName]: value }));
+    };
+
+    const closeAndSaveModal = () => {
+        console.log(chosenBank, 'chosenBank');
+        setShow(false);
+    };
 
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+
+    const usersBanks = Object.values(banks).filter((e) => (e.user === user[USER_ID_FIELD]));
 
     return (
         <>
@@ -33,7 +62,6 @@ const UserAccount = () => {
                                 src={user[USER_AVATAR_FIELD] ? user[USER_AVATAR_FIELD] : noavatar}
                                 rounded/>
                             <h3>{user[USER_NAME_FIELD]} {user[USER_SECOND_NAME_FIELD]}</h3>
-
                         </Col>
                         <Col lg={8} xs={12} className={style.userAccount__headersWrapper}>
                             <Row className={`row-cols-1 g-2 ${style.userAccount__headersRow}`}>
@@ -45,7 +73,7 @@ const UserAccount = () => {
                     </Row>
                     <Row>
                         <Col sm={12} className={style.userAccount__addBank}>
-                            <Button variant="primary" onClick={handleShow}>
+                            <Button variant="primary" onClick={openModal}>
                                 create new bank
                             </Button>
                         </Col>
@@ -59,10 +87,11 @@ const UserAccount = () => {
                             <div className={style.userAccount__cardsHeader}>
                                 <h3>banks</h3>
                             </div>
-                            <BankCardHor handleShow={handleShow}/>
-                            <BankCardHor handleShow={handleShow}/>
-                            <BankCardHor handleShow={handleShow}/>
-                            <BankCardHor handleShow={handleShow}/>
+                            {usersBanks.map((bank) => (<BankCardHor
+                                bank={bank}
+                                key={bank[BANK_ID_FIELD]}
+                                openModal={openModal}/>
+                            ))}
                         </Col>
                         <Col lg={6} className={''}>
                             <div className={style.userAccount__cardsHeader}>
@@ -76,7 +105,11 @@ const UserAccount = () => {
             </Container>
             <EditBankModal
                 show={show}
-                handleClose={handleClose}/>
+                closeAndSaveModal={closeAndSaveModal}
+                handleClose={handleClose}
+                chosenBank={chosenBank}
+                updateChosenBank={updateChosenBank}
+            />
         </>
     );
 };
