@@ -3,7 +3,7 @@ import { Container, Row } from 'react-bootstrap';
 import style from './loader.module.scss';
 
 const Loader = () => (
-    <Container className={style.ldsRollerWrapper}>
+    <Container fluid className={style.ldsRollerWrapper}>
         <Row>
             <div className={style.ldsRoller}>
                 <div></div>

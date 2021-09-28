@@ -1,13 +1,17 @@
 import {
     BANK_AVATAR,
+    BANK_ID_FIELD,
     BANK_NAME,
     INTEREST_RATE,
     LOAN_TERM,
     MAXIMUM_LOAN,
     MINIMUM_DOWN_PAYMENT
 } from '../../consts/bankConsts';
-// import { USER_ID_FIELD } from '../../consts/userConsts';
-import { createNewBank } from '../../http/bankApi';
+import { USER_ID_FIELD } from '../../consts/userConsts';
+import { createNewBank, updateBank } from '../../http/bankApi';
+import { getNewTokens } from '../../http/userApi';
+import { showToast } from '../toastReducer';
+import { getAllBanks } from './banksReducer';
 
 const CHANGE_BANK_NAME = 'CHANGE_BANK_NAME';
 const CHANGE_BANK_AVATAR = 'CHANGE_BANK_AVATAR';
@@ -15,7 +19,7 @@ const CHANGE_INTEREST_RATE = 'CHANGE_INTEREST_RATE';
 const CHANGE_MAXIMUM_LOAN = 'CHANGE_MAXIMUM_LOAN';
 const CHANGE_MINIMUM_DOWN_PAYMENT = 'CHANGE_MINIMUM_DOWN_PAYMENT';
 const CHANGE_LOAN_TERM = 'CHANGE_LOAN_TERM';
-const CLEAR_ALL_FIELDS = 'CLEAR_ALL_FIELDS';
+const LOAD_BANK = 'LOAD_BANK';
 
 const initialState = {
     [BANK_NAME]: '',
@@ -33,14 +37,15 @@ export const editBankReducer = (state = initialState, action) => {
         case CHANGE_BANK_AVATAR:
             return { ...state, [BANK_AVATAR]: action.payload };
         case CHANGE_INTEREST_RATE:
-            return { ...state, [INTEREST_RATE]: action.text };
+            return { ...state, [INTEREST_RATE]: parseInt(action.value, 10) };
         case CHANGE_MAXIMUM_LOAN:
-            return { ...state, [MAXIMUM_LOAN]: action.text };
+            return { ...state, [MAXIMUM_LOAN]: parseInt(action.value, 10) };
         case CHANGE_MINIMUM_DOWN_PAYMENT:
-            return { ...state, [MINIMUM_DOWN_PAYMENT]: action.text };
+            return { ...state, [MINIMUM_DOWN_PAYMENT]: parseInt(action.value, 10) };
         case CHANGE_LOAN_TERM:
-            return { ...state, [LOAN_TERM]: action.payload };
-        case CLEAR_ALL_FIELDS:
+            return { ...state, [LOAN_TERM]: parseInt(action.value, 10) };
+        case LOAD_BANK:
+            if (action.payload) return { ...action.payload };
             return { ...initialState };
         default:
             return state;
@@ -49,27 +54,44 @@ export const editBankReducer = (state = initialState, action) => {
 
 export const changeBankName = (text) => ({ type: CHANGE_BANK_NAME, text });
 
-export const changeBankAvatar = (payload) => ({ type: CHANGE_BANK_NAME, payload });
+export const changeBankAvatar = (payload) => ({ type: CHANGE_BANK_AVATAR, payload });
 
-export const changeInterestRate = (text) => ({ type: CHANGE_INTEREST_RATE, text });
+export const changeInterestRate = (value) => ({ type: CHANGE_INTEREST_RATE, value });
 
-export const changeMaximumLoan = (text) => ({ type: CHANGE_MAXIMUM_LOAN, text });
+export const changeMaximumLoan = (value) => ({ type: CHANGE_MAXIMUM_LOAN, value });
 
-export const changeMinimumDownPayment = (text) => ({ type: CHANGE_MINIMUM_DOWN_PAYMENT, text });
+export const changeMinimumDownPayment = (value) => ({ type: CHANGE_MINIMUM_DOWN_PAYMENT, value });
 
-export const changeLoanTerm = (text) => ({ type: CHANGE_LOAN_TERM, text });
+export const changeLoanTerm = (value) => ({ type: CHANGE_LOAN_TERM, value });
 
-export const clearAllFields = () => ({ type: CLEAR_ALL_FIELDS });
+export const loadBankToState = (payload) => ({ type: LOAD_BANK, payload });
 
-export const registerNewBank = () => async (dispatch, getState) => {
+export const createUpdateBank = () => async (dispatch, getState) => {
 
-    const bankData = getState().bank;
+    const currentBank = getState().bank;
     const currentUser = getState().user;
-    console.log(currentUser);
-    const isBankCreated = await createNewBank(bankData);
 
-    if (isBankCreated) {
-        // dispatch(clearAllFields());
-        // dispatch(getCurrentUserBanks(currentUser[USER_ID_FIELD]));
+    if (currentUser[USER_ID_FIELD]) {
+        try {
+            if (!currentBank[BANK_ID_FIELD]) {
+                await createNewBank(currentBank, currentUser[USER_ID_FIELD]);
+            } else {
+                await updateBank(currentBank, currentUser[USER_ID_FIELD]);
+            }
+            dispatch(getAllBanks());
+        } catch (e) {
+            if (e.response.status !== 401) {
+                dispatch(showToast(e.response.data.message));
+            }
+
+            if (e.response.status === 401) {
+                try {
+                    await dispatch(getNewTokens());
+                    await createUpdateBank();
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+        }
     }
 };

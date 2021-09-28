@@ -36,30 +36,6 @@ const authController = {
         }
     },
 
-    createNewAdmin: async (req, res, next) => {
-        try {
-            const { newAdmin } = req;
-
-            const user = await authService.checkEmail(newAdmin.email);
-
-            if (user) throw new CustomError(code.CONFLICT, message.EMAIL_EXISTS);
-
-            const hashedPassword = await authService.hashPassword(newAdmin.password);
-
-            const newUser = await authService.addNewUser({
-                ...newAdmin,
-                password: hashedPassword
-            });
-
-            const normalizedUser = userNormalizer(newUser);
-
-            res.json({ user: normalizedUser });
-
-        } catch (e) {
-            next(e);
-        }
-    },
-
     logIn: async (req, res, next) => {
         try {
             const { currentUser, body: { password } } = req;

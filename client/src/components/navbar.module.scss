@@ -9,9 +9,19 @@
     padding: .75rem;
   }
 
-  a:hover {
+  button {
+    text-decoration: none;
+    color: white;
+    border: none;
+  }
+
+  button:active, button:focus {
+    border: none;
+    box-shadow: none;
+  }
+
+  a:hover, button:hover {
     cursor: pointer;
     color: $yellow;
   }
-
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { adminRoutes, publicRoutes, userRoutes } from '../routes';
+import { publicRoutes, userRoutes } from '../routes';
 import { HOME_ROUTE } from '../consts/pagePaths';
 import { checkTokens } from '../redux/userReducers/authReducer';
 
@@ -14,9 +14,6 @@ const AppRouter = () => {
 
     return (
         <Switch>
-            {currentUser.role === 'user' && adminRoutes.map(({ path, page }) => (
-                <Route key={path} path={path} component={page} exact/>
-            ))}
             {userRoutes.map(({ path, page }) => (
                 <Route key={path} path={path} component={page} exact/>
             ))}

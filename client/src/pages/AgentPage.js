@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Col, Container, Image, Row } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import BankCardVert from '../components/bankCardVert';
+import BankCardVert from '../components/BankCardVert';
 import Loader from '../components/Loader';
 import {
     USER_AVATAR_FIELD,
@@ -56,7 +56,7 @@ const AgentPage = () => {
                             <div className={style.userAccount__cardsHeader}>
                                 <h3>banks</h3>
                             </div>
-                            <Row className={`row-cols-2 g-2 ${style.userAccount__headersRow}`}>
+                            <Row className={`row-cols-3 g-2 ${style.userAccount__headersRow}`}>
                                 {agentsBanks.map((bank) => <BankCardVert bank={bank} />)}
                             </Row>
                         </Col>

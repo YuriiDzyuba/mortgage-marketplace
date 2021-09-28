@@ -1,14 +1,15 @@
 const CustomError = require('../../exeptions/customError');
-const adService = require('./bank.service');
-const { code, message } = require('../../consts');
+const bankService = require('./bank.service');
+const { code, message, bankConstants: { BANK_AVATAR } } = require('../../consts');
+const authService = require('../auth/auth.service');
 
 const bankController = {
     getAllBanks: async (req, res, next) => {
         try {
-            const banks = await adService.getAllBanks();
+            const banks = await bankService.getAllBanks();
 
             if (!Object.keys(banks).length) throw new CustomError(code.NOT_FOUND, message.NO_ADS);
-            console.log(banks,'banks');
+
             res.json(banks);
 
         } catch (e) {
@@ -18,12 +19,20 @@ const bankController = {
 
     createNewBank: async (req, res, next) => {
         try {
-            const adData = req.body;
+            const bankData = req.body;
             const { currentUser } = req;
 
-            const newAdData = await adService.createNewAd(adData, currentUser._id);
+            const newBank = await bankService.createNewBank(bankData, currentUser._id);
 
-            if (!newAdData) throw new CustomError(code.INTERNAL_SERVER_ERROR, message.CANT_CREATE_AD);
+            if (!newBank) throw new CustomError(code.INTERNAL_SERVER_ERROR, message.CANT_CREATE_AD);
+
+            if (req.files && req.files[BANK_AVATAR]) {
+                const { _id } = newBank;
+
+                const uploadFile = await authService.uploadImageToAWS(req.files[BANK_AVATAR], BANK_AVATAR, _id);
+
+                await bankService.updateBank(_id, { [BANK_AVATAR]: uploadFile.Location }, true);
+            }
 
             res.json({ message: message.AD_CREATED });
 
@@ -32,55 +41,44 @@ const bankController = {
         }
     },
 
-    getAdsByParams: (req, res, next) => {
-        try {
-            const { chosenAds } = req;
-
-            res.json(chosenAds);
-
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    getOneAd: async (req, res, next) => {
+    getOneBank: async (req, res, next) => {
         try {
             const { id } = req.params;
 
-            const chosenAd = await adService.getOneAd(id);
+            const chosenBank = await bankService.getOneBank(id);
 
-            if (!chosenAd) throw new CustomError(code.NOT_FOUND, message.NO_AD);
+            if (!chosenBank) throw new CustomError(code.NOT_FOUND, message.NO_AD);
 
-            res.json(chosenAd);
-
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    updateAd: async (req, res, next) => {
-        try {
-            const { adId } = req.params;
-            const adDataToUpdate = req.body;
-
-            const updatedAd = await adService.updateAdvertisement(adId, adDataToUpdate);
-
-            if (!updatedAd) throw new CustomError(code.INTERNAL_SERVER_ERROR, message.CANT_UPDATE_AD);
-
-            res.json(updatedAd);
+            res.json(chosenBank);
 
         } catch (e) {
             next(e);
         }
     },
 
-    deleteAd: async (req, res, next) => {
+    updateBank: async (req, res, next) => {
         try {
-            const { id } = req.params;
 
-            const deletedAd = await adService.deleteAd(id);
+            const bankDataToUpdate = req.body;
 
-            if (!deletedAd) throw new CustomError(code.INTERNAL_SERVER_ERROR, message.CANT_DELETE_AD);
+            const updatedBank = await bankService.updateBank(bankDataToUpdate._id, bankDataToUpdate);
+
+            if (!updatedBank) throw new CustomError(code.INTERNAL_SERVER_ERROR, message.CANT_UPDATE_AD);
+
+            res.json(updatedBank);
+
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    deleteBank: async (req, res, next) => {
+        try {
+            const { _id } = req.body;
+
+            const deletedBank = await bankService.deleteBank(_id);
+
+            if (!deletedBank) throw new CustomError(code.INTERNAL_SERVER_ERROR, message.CANT_DELETE_AD);
 
             res.json({ message: message.AD_DELETED });
 

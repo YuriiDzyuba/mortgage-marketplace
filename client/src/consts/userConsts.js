@@ -1,3 +1,4 @@
+export const USER = 'user';
 export const USER_EMAIL_FIELD = 'email';
 export const USER_PASSWORD_FIELD = 'password';
 export const USER_NAME_FIELD = 'name';

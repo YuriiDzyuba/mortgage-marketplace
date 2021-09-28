@@ -25,20 +25,13 @@ const $getCurrentAgentHost = axios.create({
     baseURL: SERVER_API_GET_ALL_AGENTS
 });
 
-const $createNewBankHost = axios.create({
-    baseURL: SERVER_API_GET_ALL_AGENTS
+const $bankHost = axios.create({
+    baseURL: SERVER_API_BANK
 });
 
 const $getAllBanksHost = axios.create({
     baseURL: SERVER_API_BANK
 });
-
-const authInterceptor = (config) => {
-    config.headers.authorization = `Bearer ${localStorage.getItem('token')}`;
-    return config;
-};
-
-$authHost.interceptors.request.use(authInterceptor);
 
 export {
     $host,
@@ -46,6 +39,6 @@ export {
     $refreshTokenHost,
     $getAllAgentsHost,
     $getCurrentAgentHost,
-    $createNewBankHost,
+    $bankHost,
     $getAllBanksHost
 };

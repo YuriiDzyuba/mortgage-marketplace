@@ -1,6 +1,6 @@
-const adService = require('../bank.service');
+const bankService = require('../bank.service');
 const CustomError = require('../../../exeptions/customError');
-const { code, message, dbEnum } = require('../../../consts');
+const { code, message, bankConstants, availablePicParams } = require('../../../consts');
 const { createNewBank, updateAd } = require('../bank.validators');
 
 const bankMiddleware = {
@@ -11,6 +11,28 @@ const bankMiddleware = {
             if (error) throw new CustomError(400, error.details[0].message);
 
             req.body = value;
+
+            next();
+
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    checkBankAvatar: (req, res, next) => {
+        try {
+            if (!req.files || !req.files[bankConstants.BANK_AVATAR]) {
+                next();
+                return;
+            }
+            const { name, size, mimetype } = req.files[bankConstants.BANK_AVATAR];
+
+            if (!availablePicParams.MIMETYPES.includes(mimetype)) {
+                throw new CustomError(code.BAD_REQUEST, `${name} - ${message.WRONG_PIC_FORMAT}`);
+            }
+            if (size > availablePicParams.MAX_SIZE) {
+                throw new CustomError(code.BAD_REQUEST, `${name} - ${message.WRONG_PIC_SIZE}`);
+            }
 
             next();
 
@@ -39,7 +61,7 @@ const bankMiddleware = {
             const { currentUser } = req;
             const { id } = req.params;
 
-            const usersAd = await adService.getUserAd(id, currentUser._id);
+            const usersAd = await bankService.getUserAd(id, currentUser._id);
 
             if (usersAd) throw new CustomError(code.FORBIDDEN, message.FORBIDDEN);
 
@@ -49,45 +71,6 @@ const bankMiddleware = {
             next(e);
         }
     },
-    getAdsByQueries: () => async (req, res, next) => {
-        try {
-            const values = {};
-            const params = req.query;
-
-            for (const param in params) {
-
-                switch (param) {
-                    case dbEnum.PRICE:
-                    case dbEnum.QUANTITY:
-                        values[param] = +params[param];
-                        break;
-                    case dbEnum.IS_SALE:
-                        values[param] = Boolean(params[param] !== 'false');
-                        break;
-                    case dbEnum.PRODUCT:
-                    case dbEnum.USER:
-                        values[param] = params[param];
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            if (!Object.keys(values).length) throw new CustomError(code.BAD_REQUEST, message.NO_QUERIES);
-
-            const chosenAds = await adService.getAdsByDynamicParam(values);
-
-            if (!chosenAds.length) throw new CustomError(code.NOT_FOUND, message.CANT_FIND_ADS);
-
-            req.chosenAds = chosenAds;
-
-            next();
-
-        } catch (e) {
-
-            next(e);
-        }
-    }
 };
 
 module.exports = bankMiddleware;

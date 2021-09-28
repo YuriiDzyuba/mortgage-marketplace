@@ -12,7 +12,7 @@ const {
         BANK_BANK_MAXIMUM_LOAN_VALUE_MAX,
         BANK_NAME_LENGTH_MAX,
         BANK_NAME_LENGTH_MIN,
-        BANK_ID_LENGTH
+        BANK_AVATAR
     },
     userConstants: {
         USER,
@@ -41,6 +41,7 @@ module.exports = {
             .min(BANK_BANK_MAXIMUM_LOAN_VALUE_MIN)
             .max(BANK_BANK_MAXIMUM_LOAN_VALUE_MAX)
             .required(),
+        [BANK_AVATAR]: Joi.any(),
         [USER]: Joi.string()
             .min(USER_ID_LENGTH)
             .max(USER_ID_LENGTH)

@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Card, Col } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
 import { BANK_AVATAR, BANK_ID_FIELD, BANK_NAME } from '../consts/bankConsts';
 import emptyImg from '../img/empty-list.png';
+import { deleteBank } from '../redux/bankReducers/banksReducer';
 import style from './bankCardHor.module.scss';
 
 const BankCardHor = ({ bank, openModal }) => {
-    // eslint-disable-next-line no-unused-vars
-    const res = null;
+
+    const [show, setShow] = useState(false);
+    const dispatch = useDispatch();
+
     return (
         <Card className={style.bankCardHor}>
             <Card.Header as="h5">{bank[BANK_NAME]}</Card.Header>
@@ -25,11 +29,29 @@ const BankCardHor = ({ bank, openModal }) => {
                         variant="primary"
                     >edit
                     </Button>
-                    <Button
-                        className={'m-1'}
-                        variant="danger"
-                    >delete
-                    </Button>
+                    {!show
+                        ? <Button
+                            onClick={() => setShow(true)}
+                            className={'m-1'}
+                            variant="danger"
+                        >delete
+                        </Button>
+                        : <>
+                            <span>are you sure?</span>
+                            <Button
+                                onClick={() => dispatch(deleteBank(bank[BANK_ID_FIELD]))}
+                                className={'m-1'}
+                                variant="danger"
+                            >yes
+                            </Button>
+                            <Button
+                                onClick={() => setShow(false)}
+                                className={'m-1'}
+                                variant="warning"
+                            >no
+                            </Button>
+                        </>
+                    }
                 </Col>
             </Card.Body>
         </Card>

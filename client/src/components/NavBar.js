@@ -1,21 +1,38 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { Container, Nav, Navbar } from 'react-bootstrap';
-import { ADMIN_PAGE_ROUTE, HOME_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, USER_ACCOUNT_ROUTE } from '../consts/pagePaths';
+import { useSelector } from 'react-redux';
+import { NavLink, useHistory } from 'react-router-dom';
+import { Button, Container, Nav, Navbar } from 'react-bootstrap';
+import { HOME_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, USER_ACCOUNT_ROUTE } from '../consts/pagePaths';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../consts/authConsts';
 import style from './navbar.module.scss';
 
-const NavBar = () => (
-    <Navbar className={style.navbar} variant="dark">
-        <Container>
-            <NavLink to={HOME_ROUTE}>buy</NavLink>
-            <Nav className="ml-auto">
-                <NavLink to={LOGIN_ROUTE}>log in</NavLink>
-                <NavLink to={REGISTRATION_ROUTE}>registration</NavLink>
-                <NavLink to={ADMIN_PAGE_ROUTE}>admin</NavLink>
-                <NavLink to={USER_ACCOUNT_ROUTE}>user</NavLink>
-            </Nav>
-        </Container>
-    </Navbar>
-);
+const NavBar = () => {
+
+    const user = useSelector((state) => state.user);
+    const history = useHistory();
+    console.log(user._id, 'user._id');
+    const logOut = () => {
+        localStorage.removeItem(ACCESS_TOKEN);
+        localStorage.removeItem(REFRESH_TOKEN);
+        history.push('/');
+    };
+
+    return (
+        <Navbar className={style.navbar} variant="dark">
+            <Container>
+                <NavLink to={HOME_ROUTE}>Home</NavLink>
+                <Nav className="ml-auto">
+                    {!user._id && <NavLink to={LOGIN_ROUTE}>log in</NavLink>}
+                    {!user._id && <NavLink to={REGISTRATION_ROUTE}>registration</NavLink>}
+                    {user._id && <NavLink to={USER_ACCOUNT_ROUTE}>user account</NavLink>}
+                    {user._id && <Button
+                        variant="link"
+                        onClick={() => logOut()}
+                    >log out</Button>}
+                </Nav>
+            </Container>
+        </Navbar>
+    );
+};
 
 export default NavBar;

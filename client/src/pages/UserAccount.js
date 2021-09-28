@@ -2,20 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Image, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../components/Loader';
-import { USER_AVATAR_FIELD,
+import BankCardHor from '../components/BankCardHor';
+import BankHistoryCard from '../components/BankHistoryCard';
+import EditBankModal from '../components/EditBankModal';
+import ToastMessage from '../components/ToastMessage';
+import { getAllBanks } from '../redux/bankReducers/banksReducer';
+import { loadBankToState } from '../redux/bankReducers/editBankReducer';
+import style from './userAccount.module.scss';
+import noavatar from '../img/no-avatar.png';
+import {
+    USER_AVATAR_FIELD,
     USER_EMAIL_FIELD,
     USER_ID_FIELD,
     USER_NAME_FIELD,
     USER_ROLE_FIELD,
-    USER_SECOND_NAME_FIELD
+    USER_SECOND_NAME_FIELD,
 } from '../consts/userConsts';
 import { BANK_ID_FIELD } from '../consts/bankConsts';
-import BankCardHor from '../components/BankCardHor';
-import BankHistoryCard from '../components/BankHistoryCard';
-import EditBankModal from '../components/EditBankModal';
-import { getAllBanks } from '../redux/bankReducers/banksReducer';
-import style from './userAccount.module.scss';
-import noavatar from '../img/no-avatar.png';
 
 const UserAccount = () => {
 
@@ -24,7 +27,6 @@ const UserAccount = () => {
     const { banks } = useSelector((state) => state.banks);
 
     const [show, setShow] = useState(false);
-    const [chosenBank, setChosenBank] = useState({});
 
     useEffect(() => {
         if (!banks.length) {
@@ -34,18 +36,9 @@ const UserAccount = () => {
 
     if (!Object.values(banks).length) return <Loader/>;
 
-    const openModal = (bankToEdit = {}) => {
-        setChosenBank(bankToEdit);
+    const openModal = (bankToEdit) => {
+        dispatch(loadBankToState(bankToEdit));
         setShow(true);
-    };
-
-    const updateChosenBank = (fieldName, value) => {
-        setChosenBank((prevState) => ({ ...prevState, [fieldName]: value }));
-    };
-
-    const closeAndSaveModal = () => {
-        console.log(chosenBank, 'chosenBank');
-        setShow(false);
     };
 
     const handleClose = () => setShow(false);
@@ -54,6 +47,7 @@ const UserAccount = () => {
 
     return (
         <>
+            <ToastMessage/>
             <Container fluid className={style.userAccount__userData}>
                 <Container>
                     <Row>
@@ -73,7 +67,7 @@ const UserAccount = () => {
                     </Row>
                     <Row>
                         <Col sm={12} className={style.userAccount__addBank}>
-                            <Button variant="primary" onClick={openModal}>
+                            <Button variant="primary" onClick={() => openModal()}>
                                 create new bank
                             </Button>
                         </Col>
@@ -105,10 +99,7 @@ const UserAccount = () => {
             </Container>
             <EditBankModal
                 show={show}
-                closeAndSaveModal={closeAndSaveModal}
                 handleClose={handleClose}
-                chosenBank={chosenBank}
-                updateChosenBank={updateChosenBank}
             />
         </>
     );

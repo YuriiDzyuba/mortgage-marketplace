@@ -6,6 +6,7 @@ import { agentReducer } from './agentReducer';
 import { agentsReducer } from './agentsReducer';
 import { banksReducer } from './bankReducers/banksReducer';
 import { editBankReducer } from './bankReducers/editBankReducer';
+import { toastReducer } from './toastReducer';
 import { userReducer } from './userReducers/userReducer';
 import { authReducer } from './userReducers/authReducer';
 import { registrationReducer } from './userReducers/registrationReducer';
@@ -17,10 +18,10 @@ const rootReducer = combineReducers({
     agents: agentsReducer,
     agent: agentReducer,
     bank: editBankReducer,
-    banks: banksReducer
+    banks: banksReducer,
+    toast: toastReducer,
 });
 
-// eslint-disable-next-line import/prefer-default-export
 export const store = createStore(rootReducer,
     composeWithDevTools(
         applyMiddleware(thunk)

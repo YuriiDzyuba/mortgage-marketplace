@@ -14,14 +14,13 @@ import {
     registerNewUser
 } from '../redux/userReducers/registrationReducer';
 import {
-    USER_SECOND_NAME_FIELD,
-    // eslint-disable-next-line sort-imports
-    USER_ROLE_FIELD,
     USER_EMAIL_FIELD,
     USER_NAME_FIELD,
     USER_PASSWORD_FIELD,
     USER_ROLE_AGENT,
-    USER_ROLE_USER
+    USER_ROLE_FIELD,
+    USER_ROLE_USER,
+    USER_SECOND_NAME_FIELD
 } from '../consts/userConsts';
 
 const Registration = () => {
@@ -37,7 +36,6 @@ const Registration = () => {
     // eslint-disable-next-line no-unused-vars,require-await
     const click = async (e) => {
         e.preventDefault();
-        // const response = await login(email, password);
         dispatch(registerNewUser());
         console.log('response');
     };

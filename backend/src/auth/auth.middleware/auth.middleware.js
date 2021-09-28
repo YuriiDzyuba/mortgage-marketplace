@@ -116,7 +116,7 @@ const authMiddleware = {
             const savedToken = await authService.findToken({ [tokenType]: token });
 
             if (!savedToken) throw new CustomError(code.UNAUTHORIZED, message.ACCOUNT_UNACTIVATED);
-            console.log(savedToken,'savedTokensavedToken');
+
             req.currentUser = savedToken.user;
 
             next();

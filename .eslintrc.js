@@ -16,6 +16,7 @@ module.exports = {
     rules: {
         'array-bracket-newline': 'off',
         'array-element-newline': 'off',
+        'import/prefer-default-export': 'off',
         'arrow-body-style': 'error',
         'block-scoped-var': 'error',
         complexity: 'error',

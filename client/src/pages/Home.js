@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { Button, Container, FormControl, InputGroup, Row } from 'react-bootstrap';
+import { Container, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import AgentCardVert from '../components/AgentCardVert';
-import BankCardVert from '../components/bankCardVert';
+import BankCardVert from '../components/BankCardVert';
 import Loader from '../components/Loader';
 import { getAllAgents } from '../redux/agentsReducer';
 import { getAllBanks } from '../redux/bankReducers/banksReducer';
@@ -23,20 +23,7 @@ const Home = () => {
 
     return (
         <>
-            <Container fluid className={style.searchBlock}>
-                <Container>
-                    <InputGroup className={` ${style.searchBlock__inputGroup}`}>
-                        <InputGroup.Text className={` ${style.searchBlock__input}`}>search</InputGroup.Text>
-                        <FormControl aria-label="First name"/>
-                        <InputGroup.Text>in</InputGroup.Text>
-                        <FormControl aria-label="Last name"/>
-                        <Button variant="secondary" id="button-addon1">
-                            search
-                        </Button>
-                    </InputGroup>
-                </Container>
-            </Container>
-            <Container fluid className={style.mainCategories}>
+            <Container fluid className={style.topAgents}>
                 <Container>
                     <h2 className={'text-center mb-5'}>Agents</h2>
                     <Row className={'row-cols-2 row-cols-lg-4 g-3 g-lg-4'}>
@@ -44,7 +31,7 @@ const Home = () => {
                     </Row>
                 </Container>
             </Container>
-            <Container fluid className={style.topAds}>
+            <Container fluid className={style.topBanks}>
                 <Container>
                     <h2 className={'text-center mb-5'}>Banks</h2>
                     <Row className={'row-cols-2 row-cols-lg-4 g-3 g-lg-4'}>

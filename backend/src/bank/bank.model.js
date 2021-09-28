@@ -6,7 +6,9 @@ const {
         BANK_INTEREST_RATE,
         BANK_MAXIMUM_LOAN,
         BANK_MINIMUM_DOWN_PAYMENT,
-        BANK_LOAN_TERM },
+        BANK_AVATAR,
+        BANK_LOAN_TERM
+    },
     userConstants: {
         USER
     }
@@ -37,6 +39,10 @@ const schema = new Schema({
         type: Number,
         required: false,
         trim: true,
+    },
+    [BANK_AVATAR]: {
+        type: String,
+        required: false,
     },
     [USER]: {
         ref: USER,

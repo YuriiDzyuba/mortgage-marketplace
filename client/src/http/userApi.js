@@ -9,6 +9,10 @@ import {
     USER_ROLE_FIELD,
     USER_SECOND_NAME_FIELD
 } from '../consts/userConsts';
+import {
+    ACCESS_TOKEN,
+    REFRESH_TOKEN
+} from '../consts/authConsts';
 
 export const registration = async ({ email, password, name, secondName, role, userAvatar }) => {
 
@@ -24,8 +28,8 @@ export const registration = async ({ email, password, name, secondName, role, us
 
     if (response.status === 200) {
         if (response.data) {
-            localStorage.setItem('accessToken', response.data.accessToken);
-            localStorage.setItem('refreshToken', response.data.refreshToken);
+            localStorage.setItem(ACCESS_TOKEN, response.data.accessToken);
+            localStorage.setItem(REFRESH_TOKEN, response.data.refreshToken);
 
             return jwt_decode(response.data.accessToken);
         }
@@ -39,22 +43,26 @@ export const login = async ({ email, password }) => {
     if (response.status === 200) {
 
         if (response.data) {
-            localStorage.setItem('accessToken', response.data.accessToken);
-            localStorage.setItem('refreshToken', response.data.refreshToken);
+            localStorage.setItem(ACCESS_TOKEN, response.data.accessToken);
+            localStorage.setItem(REFRESH_TOKEN, response.data.refreshToken);
         }
         return jwt_decode(response.data.accessToken);
 
     } return false;
 };
 
-export const getNewTokens = async (token) => {
-    const response = await $refreshTokenHost.post('/refresh', {}, { headers: { Authorization: token } });
+export const getNewTokens = async () => {
+    const response = await $refreshTokenHost.post(
+        '/refresh',
+        {},
+        { headers: { Authorization: localStorage.getItem(REFRESH_TOKEN) } }
+);
 
     if (response.status === 200) {
 
         if (response.data) {
-            localStorage.setItem('accessToken', response.data.accessToken);
-            localStorage.setItem('refreshToken', response.data.refreshToken);
+            localStorage.setItem(ACCESS_TOKEN, response.data.accessToken);
+            localStorage.setItem(REFRESH_TOKEN, response.data.refreshToken);
         }
         return jwt_decode(response.data.accessToken);
 
